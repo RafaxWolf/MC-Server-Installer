@@ -31,28 +31,26 @@ sudo yum install java-17-amazon-corretto iptables wget curl --allowerasing -y  #
 wait 1000
 
 # Abrir el puerto 25565 (TCP y UDP)
-echo -e "${yellowColour}[+] Abriendo puerto: 25565${endColour}"
+echo -e "${yellowColour}[!] Abriendo puerto: 25565${endColour}"
 
 sudo iptables -I INPUT -p tcp --dport 25565 -j ACCEPT
 sudo iptables -I INPUT -p udp --dport 25565 -j ACCEPT
 sudo service iptables save
 
-echo -e "${greenColour}[+] Puerto abierto.${endColour}\n"
+echo -e "${greenColour}[!] Puerto abierto.${endColour}\n"
 
 wait 1000
 
 # Crear la carpeta del servidor y moverse a ella
 echo -e "${greenColour}[+] Creando la carpeta del servidor...${endColour}"
 
-mkdir -p /home/ec2-user/minecraft-server
-cd /home/ec2-user/minecraft-server
-
-echo -e "${greenColour}[+] Carpeta creada.${endColour}"
+mkdir -p /home/Minecraft-Server
+cd /home/Minecraft-Server
 
 # Descargar el servidor de Minecraft
 echo -e "${greenColour}[+] Descargando server.jar...${endColour}"
 
-wget -O server.jar https://launcher.mojang.com/v1/objects/$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json | jq -r '.latest.release')
+wget -O "server.jar" https://launcher.mojang.com/v1/objects/$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json | jq -r '.latest.release')
 
 echo -e "${greenColour}[+] server.jar Descargado.${endColour}"
 
@@ -63,7 +61,7 @@ echo -e "${turquoiseColour}[+] Eula aceptado.${endColour}"
 # Configurar `server.properties`
 echo -e "${blueColour}[+] Configurando el servidor...${endColour}\n"
 
-echo "motd=Servidor de Minecraft en Amazon Linux" >> server.properties
+echo "motd=Servidor de Minecraft en Amazon Linux" > server.properties
 echo "online-mode=false" >> server.properties  # Permite modo No Premium
 
 echo -e "${greenColour}[+] Servidor configurado.${endColour}\n"
@@ -73,7 +71,7 @@ echo -e "${greenColour}[+] Creando el ejecutable del servidor...${endColour}"
 
 echo "#!/bin/bash
 cd /home/ec2-user/minecraft-server
-java -Xmx2G -Xms2G -jar server.jar nogui" > /home/ec2-user/minecraft-server/start_server.sh
+java -Xmx2G -Xms2G -jar server.jar" > /home/ec2-user/minecraft-server/start.sh
 chmod +x /home/ec2-user/minecraft-server/start_server.sh
 
 echo -e "${greenColour}[+] Ejecutable Creado.${endColour}\n"
@@ -81,32 +79,41 @@ echo -e "${greenColour}[+] Ejecutable Creado.${endColour}\n"
 wait 1000
 
 # Crear el servicio `minecraft.service`
-echo -e "${greenColour}[+] Creando servicio del servidor...${endColour}"
+#echo -e "${greenColour}[+] Creando servicio del servidor...${endColour}"
 
-sudo bash -c 'cat <<EOF > /etc/systemd/system/minecraft.service
-[Unit]
-Description=Minecraft Server
-After=network.target
+#sudo bash -c 'cat <<EOF > /etc/systemd/system/minecraft-server.service
+#[Unit]
+#Description=Minecraft Server Service
+#After=network.target
 
-[Service]
-User=ec2-user
-WorkingDirectory=/home/ec2-user/minecraft-server
-ExecStart=/home/ec2-user/minecraft-server/start_server.sh
-Restart=always
+#[Service]
+#User=ec2-user
+#WorkingDirectory=/home/Minecraft-Server
+#ExecStart=/home/Minecraft-Server/start.sh
+#Restart=always
 
-[Install]
-WantedBy=multi-user.target
-EOF'
+#[Install]
+#WantedBy=multi-user.target
+#EOF'
 
-echo -e "${greenColour}[+] Servicio creado.${endColour}\n"
+#echo -e "${greenColour}[+] Servicio creado.${endColour}\n"
 
 # Habilitar y arrancar el servicio
-sudo systemctl enable minecraft
-sudo systemctl start minecraft
+#sudo systemctl enable minecraft
+#sudo systemctl start minecraft
 
-echo -e "${greenColour}[+] Servicio Habilitado.${endColour}\n"
+#echo -e "${greenColour}[+] Servicio Habilitado.${endColour}\n"
 
-wait 2000
+# Iniciar el servidor de Minecraft
 
-echo -e "\n${greenColour}[+] Instalación completada y Servidor en ejecución.${endColour}"
-exit 0
+echo -e "\n${greenColour}[+] Instalación completada [+]${endColour}\n"
+
+wait 1000
+clear
+echo -e "${greenColour}[+] Iniciando el servidor de Minecraft...${endColour}\n"
+
+{
+    tmux new-session -d -s Minecraft-Server "java -Xmx2G -Xms2G -jar /home/Minecraft-Server/server.jar"
+} || {
+    /home/Minecraft-Server/./start.sh
+}
