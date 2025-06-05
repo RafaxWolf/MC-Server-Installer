@@ -37,6 +37,12 @@ else
 fi
 
 if [[ "$OS" == "Amazon Linux" || "$OS" == "Amazon Linux 2" ]]; then
-    echo -e "${redColour}[!] Este script solo es compatible con Amazon Linux y Amazon Linux 2.${endColour}"
+    ./AWS/Amazon\ Linux/server_install.sh
     
+else if [[ "$OS" == "Arch Linux" ]]; then
+    ./Ubuntu/server_install.sh
+    
+else
+    echo -e "${redColour}[!] Sistema operativo no soportado. Por favor, usa Amazon Linux o Ubuntu/Debian.${endColour}"
+    exit 1
 fi
