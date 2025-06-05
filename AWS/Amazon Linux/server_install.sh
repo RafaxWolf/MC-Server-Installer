@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MC Server Install Script V1.0, Author @RafaxWolf, For Amazon Linux EC2
+### MC Server Install Script V1.0, Author @RafaxWolf, For Amazon Linux EC2
 
 # Colores
 greenColour="\e[0;32m\033[1m"
