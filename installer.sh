@@ -40,7 +40,7 @@ echo -e "${blueColour}[+] Detectando cual es su Distribución...${endColour}"
     OS=$NAME
 else
     echo -e "${redColour}[!] No se pudo determinar su Distribución!${endColour}"
-    echo -e "${redColour}[!] Por favor, asegurese de que su sistema tenga el archivo /etc/os-release.${endColour}"
+    echo -e "${redColour}[!] Por favor, asegúrese de que su sistema tenga el archivo /etc/os-release.${endColour}"
     wait 1000
     echo -e "${redColour}[!] Saliendo...${endColour}"
     wait 500
